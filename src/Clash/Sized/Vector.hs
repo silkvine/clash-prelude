@@ -106,7 +106,7 @@ where
 
 import Control.DeepSeq            (NFData (..))
 import qualified Control.Lens     as Lens hiding (pattern (:>), pattern (:<))
-import Data.Default               (Default (..))
+import Data.Default.Class         (Default (..))
 import qualified Data.Foldable    as F
 import Data.Bifunctor.Flip        (Flip (..))
 import Data.Kind                  (Type)
@@ -185,7 +185,7 @@ let sortV_flip xs = map fst sorted :< (snd (last sorted))
 let populationCount' :: (KnownNat k, KnownNat (2^k)) => BitVector (2^k) -> Index ((2^k)+1)
     populationCount' bv = dtfold (Proxy @IIndex)
                                  fromIntegral
-                                 (\_ x y -> plus x y)
+                                 (\_ x y -> add x y)
                                  (bv2v bv)
 :}
 
@@ -1393,7 +1393,7 @@ repeat = withSNat replicate
 -- >>> iterate d4 (+1) 1
 -- <1,2,3,4>
 --
--- \"'interate' @n f z@\" corresponds to the following circuit layout:
+-- \"'iterate' @n f z@\" corresponds to the following circuit layout:
 --
 -- <<doc/iterate.svg>>
 iterate :: SNat n -> (a -> a) -> a -> Vec n a
@@ -1408,7 +1408,7 @@ iterate SNat = iterateI
 -- >>> iterateI (+1) 1 :: Vec 3 Int
 -- <1,2,3>
 --
--- \"'interateI' @f z@\" corresponds to the following circuit layout:
+-- \"'iterateI' @f z@\" corresponds to the following circuit layout:
 --
 -- <<doc/iterate.svg>>
 iterateI :: KnownNat n => (a -> a) -> a -> Vec n a
@@ -1932,15 +1932,15 @@ dfold _ f z xs = go (snatProxy (asNatProxy xs)) xs
 -- 'Index' ((2^d)+1) -> 'Index' ((2^d)+1) -> 'Index' ((2^(d+1))+1)
 -- @
 --
--- We have such an adder in the form of the 'Clash.Class.Num.plus' function, as
+-- We have such an adder in the form of the 'Clash.Class.Num.add' function, as
 -- defined in the instance 'Clash.Class.Num.ExtendingNum' instance of 'Index'.
 -- However, we cannot simply use 'fold' to create a tree-structure of
--- 'Clash.Class.Num.plus'es:
+-- 'Clash.Class.Num.add'es:
 --
 -- >>> :{
 -- let populationCount' :: (KnownNat (n+1), KnownNat (n+2))
 --                      => BitVector (n+1) -> Index (n+2)
---     populationCount' = fold plus . map fromIntegral . bv2v
+--     populationCount' = fold add . map fromIntegral . bv2v
 -- :}
 -- <BLANKLINE>
 -- <interactive>:...
@@ -1948,9 +1948,9 @@ dfold _ f z xs = go (snatProxy (asNatProxy xs)) xs
 --       Expected type: Index (n + 2) -> Index (n + 2) -> Index (n + 2)
 --         Actual type: Index (n + 2)
 --                      -> Index (n + 2) -> AResult (Index (n + 2)) (Index (n + 2))
---     • In the first argument of ‘fold’, namely ‘plus’
---       In the first argument of ‘(.)’, namely ‘fold plus’
---       In the expression: fold plus . map fromIntegral . bv2v
+--     • In the first argument of ‘fold’, namely ‘add’
+--       In the first argument of ‘(.)’, namely ‘fold add’
+--       In the expression: fold add . map fromIntegral . bv2v
 --     • Relevant bindings include
 --         populationCount' :: BitVector (n + 1) -> Index (n + 2)
 --           (bound at ...)
@@ -1958,7 +1958,7 @@ dfold _ f z xs = go (snatProxy (asNatProxy xs)) xs
 -- because 'fold' expects a function of type \"@a -> a -> a@\", i.e. a function
 -- where the arguments and result all have exactly the same type.
 --
--- In order to accommodate the type of our 'Clash.Class.Num.plus', where the
+-- In order to accommodate the type of our 'Clash.Class.Num.add', where the
 -- result is larger than the arguments, we must use a dependently typed fold in
 -- the form of 'dtfold':
 --
@@ -1974,7 +1974,7 @@ dfold _ f z xs = go (snatProxy (asNatProxy xs)) xs
 --                  => BitVector (2^k) -> Index ((2^k)+1)
 -- populationCount' bv = 'dtfold' (Proxy @IIndex)
 --                              fromIntegral
---                              (\\_ x y -> 'Clash.Class.Num.plus' x y)
+--                              (\\_ x y -> 'Clash.Class.Num.add' x y)
 --                              ('bv2v' bv)
 -- @
 --

@@ -12,7 +12,7 @@ Maintainer :  Christiaan Baaij <christiaan.baaij@gmail.com>
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeOperators       #-}
 
-{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE Safe #-}
 
 module Clash.Signal.Delayed
   ( -- * Delay-annotated synchronous signals
@@ -33,7 +33,7 @@ module Clash.Signal.Delayed
   )
 where
 
-import           Data.Default                  (Default)
+import           Data.Default.Class            (Default)
 import           GHC.TypeLits                  (KnownNat, type (+))
 
 import qualified Clash.Explicit.Signal.Delayed as E

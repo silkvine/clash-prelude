@@ -83,7 +83,7 @@ import Data.Int
 import GHC.Prim
 import GHC.TypeLits
 import GHC.Word
-import Data.Default
+import Data.Default.Class
 
 {- $setup
 >>> :set -XTemplateHaskell -XDataKinds -XConstraintKinds -XTypeApplications
@@ -792,7 +792,7 @@ __bundle__   :: 'Bundle' a => 'Unbundled' domain a -> 'Signal' domain a
 __unbundle__ :: 'Bundle' a => 'Signal' domain a -> 'Unbundled' domain a
 @
 
-'Unbundled' is an <http://www.haskell.org/ghc/docs/latest/html/users_guide/type-families.html#assoc-decl associated type family>
+'Unbundled' is an <https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/glasgow_exts.html#associated-data-and-type-families associated type family>
 belonging to the 'Bundle' <http://en.wikipedia.org/wiki/Type_class type class>,
 which, together with 'bundle' and 'unbundle' defines the isomorphism between a
 product type of 'Signal's and a 'Signal' of a product type. That is, while
@@ -1250,11 +1250,11 @@ a general listing of the available template holes:
 * @~VIVADO@: /1/ when CλaSH compiler is invoked with the @-fclash-xilinx@ or
   @-fclash-vivado@ flag. To be used with in an @~IF .. ~THEN .. ~ElSE .. ~FI@
   statement.
-* @~FROMBV[\<HOLE\>][\<TYPE\>]@: create conversion code that so that the
+* @~TOBV[\<HOLE\>][\<TYPE\>]@: create conversion code that so that the
   expression in @\<HOLE\>@ is converted to a bit vector (@std_logic_vector@).
   The @\<TYPE\>@ hole indicates the type of the expression and must be either
   @~TYP[N]@, @~TYPO@, or @~TYPELEM[\<HOLE\>]@.
-* @~TOBV[\<HOLE\>][\<TYPE\>]@: create conversion code that so that the
+* @~FROMBV[\<HOLE\>][\<TYPE\>]@: create conversion code that so that the
   expression in @\<HOLE\>@, which has a bit vector (@std_logic_vector@) type, is
   converted to type indicated by @\<TYPE\>@. The @\<TYPE\>@ hole indicates the
   must be either @~TYP[N]@, @~TYPO@, or @~TYPELEM[\<HOLE\>]@.
